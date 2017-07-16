@@ -51,10 +51,9 @@ def create_random_date():
 
 def add_random_entry():
     entry = create_random_entry()
-    Entry.create(name=entry['name'], task=entry['task'],
+    return Entry.create(name=entry['name'], task=entry['task'],
                  spent_minutes=entry['spent_minutes'],
                  notes=entry['notes'])
-    return entry
 
 
 class WorklogTest(unittest.TestCase):
@@ -254,7 +253,7 @@ class WorklogTest(unittest.TestCase):
     @mock.patch('worklog_db.edit_name')
     @mock.patch('worklog_db.get_input', side_effect=['a', 'b', 'c', 'd'])
     def test_edit_entry(self, mock_get_input, mock_a, mock_b, mock_c, mock_d):
-        entry = create_random_entry()
+        entry = add_random_entry()
         worklog_db.edit_entry(entry)
         mock_a.assert_called_once_with(entry)
         worklog_db.edit_entry(entry)
@@ -347,6 +346,13 @@ class WorklogTest(unittest.TestCase):
     def test_get_notes(self, _):
         self.assertEqual(worklog_db.get_notes(), 'foo')
 
+    @mock.patch('worklog_db.input', return_value='name')
+    def test_get_name(self, _):
+        self.assertEqual(worklog_db.get_name(), 'name')
+
+    @mock.patch('worklog_db.input', return_value='task')
+    def test_get_task(self, _):
+        self.assertEqual(worklog_db.get_task(), 'task')
 
 if __name__ == '__main__':
     test_db.connect()

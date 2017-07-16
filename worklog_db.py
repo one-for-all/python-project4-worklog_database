@@ -53,11 +53,17 @@ def initialize():
 # Input functions
 ########################################################
 def get_name():
-    return input("Enter name: ").strip()
+    while True:
+        name = input("Enter name: ").strip()
+        if not name.isspace():
+            return name
 
 
 def get_task():
-    return input("Enter task name: ").strip()
+    while True:
+        task = input("Enter task name: ").strip()
+        if not task.isspace():
+            return task
 
 
 def get_spent_minutes_string():
@@ -111,7 +117,7 @@ def add_entry():
 
 def get_browse_input():
     print()
-    print("[N]ext (Default), [P]revious, [E]dit, [D]elete")
+    print("[N]ext (Default), [P]revious, [E]dit, [D]elete, [B]ack")
     return get_input().lower()
 
 
@@ -163,7 +169,7 @@ def edit_entry(entry):
     chosen = get_input().lower()
     if chosen in entry_attributes:
         entry_attributes[chosen](entry)
-        #entry.save()
+        entry.save()
         return True
     else:
         return False
@@ -187,6 +193,8 @@ def browse_through(matched_entries):
                 edited = edit_entry(entry)
                 if edited:
                     break
+            elif browse_option == 'b':
+                break
             else:
                 index +=1
     else:
@@ -205,6 +213,8 @@ def find_by_employee():
     print("Enter an employee name")
     print("Enter q to go back (Default)")
     name = get_input()
+    if name == 'q':
+        return None
     matched_entries = entries.where(Entry.name.contains(name))
     unique_names = set([entry.name for entry in matched_entries])
     if len(unique_names) > 1:
